@@ -1,0 +1,20 @@
+{
+  "name": "world_heritage_app_jp_v2",
+  "version": "1.0.0",
+  "description": "## 新機能 - **世界遺産名セレクター**     上部の入力欄で候補（datalist）から名称を選び、Enter でその地点へジャンプ & ポップアップ。",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "fast-xml-parser": "^5.2.3",
+    "he": "^1.2.0",
+    "html-entities": "^2.6.0",
+    "translate-google": "^1.5.0",
+    "xml2js": "^0.6.2"
+  }
+}

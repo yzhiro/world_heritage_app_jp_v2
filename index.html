@@ -1,64 +1,115 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>世界遺産マップ</title>
-  <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <style>
-    html, body, #map { height: 100%; margin: 0; padding: 0; }
-    #sidebar { z-index: 1000; }
-  </style>
-</head>
-<body class="bg-gray-100">
-  <!-- Sidebar -->
-  <div id="sidebar"
-       class="absolute top-0 left-0 bg-white shadow-md p-3 m-3 rounded-lg w-full sm:w-80 max-h-96 overflow-y-auto space-y-2">
+  <head>
+    <meta charset="UTF-8" />
+    <title>World-Heritage Map</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,user-scalable=no"
+    />
 
-    <!-- 世界遺産名からジャンプ -->
-    <input id="siteSelect" list="sitesList"
-           placeholder="世界遺産名を選択 → Enter"
-           class="w-full px-3 py-2 border rounded" />
-    <datalist id="sitesList"></datalist>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 検索キーワード -->
-    <input id="searchInput" type="text" placeholder="キーワードフィルター"
-           class="w-full px-3 py-2 border rounded" />
+    <!-- Leaflet & plugins -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css"
+    />
 
-    <!-- カテゴリ & 国 -->
-    <div class="flex flex-col sm:flex-row gap-2">
-      <select id="categoryFilter" class="flex-1 px-2 py-2 border rounded">
-        <option value="">種別(全て)</option>
-        <option value="文化遺産">文化遺産</option>
-        <option value="自然遺産">自然遺産</option>
-        <option value="複合遺産">複合遺産</option>
-      </select>
-      <select id="countryFilter" class="flex-1 px-2 py-2 border rounded">
-        <option value="">国(全て)</option>
-      </select>
-    </div>
+    <style>
+      html,
+      body,
+      #map {
+        height: 100%;
+        margin: 0;
+      }
+      #sidebar {
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <!-- ☰ (スマホ用) -->
+    <button
+      id="menuBtn"
+      class="sm:hidden fixed z-[1100] top-4 left-4 w-10 h-10 flex flex-col justify-between p-1.5 bg-white/80 backdrop-blur rounded-lg shadow"
+    >
+      <span class="block h-0.5 w-full bg-gray-800"></span>
+      <span class="block h-0.5 w-full bg-gray-800"></span>
+      <span class="block h-0.5 w-full bg-gray-800"></span>
+    </button>
 
-    <!-- 緯度経度ジャンプ -->
-    <div class="flex flex-col gap-2 pt-2">
-      <div class="flex gap-2">
-        <input id="latInput" type="number" step="any" placeholder="緯度"
-               class="flex-1 px-2 py-2 border rounded" />
-        <input id="lonInput" type="number" step="any" placeholder="経度"
-               class="flex-1 px-2 py-2 border rounded" />
+    <!-- ▽▽ Sidebar ▽▽ -->
+    <aside
+      id="sidebar"
+      class="fixed sm:absolute top-0 left-0 m-3 p-4 w-[85vw] sm:w-80 bg-white/90 backdrop-blur rounded-lg shadow max-h-[95vh] overflow-y-auto space-y-4 transition-transform -translate-x-full sm:translate-x-0"
+    >
+      <!-- Language -->
+      <div>
+        <label for="langToggle" class="font-semibold text-gray-600"
+          >Language</label
+        >
+        <select
+          id="langToggle"
+          class="w-full mt-1 border border-gray-300 rounded p-1"
+        >
+          <option value="ja">日本語</option>
+          <option value="en">English</option>
+        </select>
       </div>
-      <button id="gotoBtn" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-        指定座標へ移動
-      </button>
-    </div>
-  </div>
 
-  <!-- Map -->
-  <div id="map"></div>
+      <!-- Filter -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between">
+          <label class="font-semibold text-gray-600">Filter</label>
+          <button
+            id="resetBtn"
+            class="text-xs px-2 py-0.5 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Reset
+          </button>
+        </div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js"></script>
-</body>
+        <input
+          id="kwInput"
+          type="text"
+          placeholder="キーワード"
+          class="w-full border border-gray-300 rounded p-1"
+        />
+
+        <select id="catSel" class="w-full border border-gray-300 rounded p-1">
+          <option value="">種別（全て）</option>
+          <option value="文化遺産">文化遺産</option>
+          <option value="自然遺産">自然遺産</option>
+          <option value="複合遺産">複合遺産</option>
+        </select>
+
+        <select id="ctySel" class="w-full border border-gray-300 rounded p-1">
+          <option value="">国（全て）</option>
+        </select>
+
+        <div id="hitCount" class="text-sm text-gray-500 mt-1"></div>
+      </div>
+    </aside>
+    <!-- △△ Sidebar △△ -->
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS & plugins -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js"></script>
+
+    <!-- Main -->
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
