@@ -1,4 +1,4 @@
-<!-- index.html  (1 / 2) -->
+<!-- index.html (1 / 2) -->
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -39,7 +39,7 @@
     </style>
   </head>
   <body class="bg-gray-100">
-    <!-- ☰ (スマホ用) -->
+    <!-- ☰ (mobile) -->
     <button
       id="menuBtn"
       class="sm:hidden fixed z-[1100] top-4 left-4 w-10 h-10 flex flex-col justify-between p-1.5 bg-white/80 backdrop-blur rounded-lg shadow"
@@ -54,21 +54,35 @@
       id="sidebar"
       class="fixed sm:absolute top-0 left-0 m-3 p-4 w-[85vw] sm:w-80 bg-white/90 backdrop-blur rounded-lg shadow max-h-[95vh] overflow-y-auto space-y-4 transition-transform -translate-x-full sm:translate-x-0"
     >
-      <!-- 言語 -->
-      <div>
-        <label for="langToggle" class="font-semibold text-gray-600"
-          >Language</label
-        >
-        <select
-          id="langToggle"
-          class="w-full mt-1 border border-gray-300 rounded p-1"
-        >
-          <option value="ja">日本語</option>
-          <option value="en">English</option>
-        </select>
+      <!-- ▼ 言語 & 遺産プルダウン -->
+      <div class="space-y-2">
+        <div>
+          <label for="langToggle" class="font-semibold text-gray-600"
+            >Language</label
+          >
+          <select
+            id="langToggle"
+            class="w-full mt-1 border border-gray-300 rounded p-1"
+          >
+            <option value="ja">日本語</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="siteSel" class="font-semibold text-gray-600"
+            >World Heritage</label
+          >
+          <select
+            id="siteSel"
+            class="w-full border border-gray-300 rounded p-1 text-sm h-9"
+          >
+            <!-- 動的生成 -->
+          </select>
+        </div>
       </div>
 
-      <!-- フィルタ -->
+      <!-- ▼ フィルタ -->
       <div class="space-y-1">
         <div class="flex items-center justify-between">
           <label class="font-semibold text-gray-600">Filter</label>
@@ -100,8 +114,8 @@
 
         <div id="hitCount" class="text-sm text-gray-500 mt-1"></div>
       </div>
-
-      <!-- お気に入り -->
+      <!-- index.html (2 / 2) -->
+      <!-- ▼ お気に入り -->
       <div>
         <label class="font-semibold text-gray-600">Favorites</label>
         <ul
@@ -109,7 +123,6 @@
           class="space-y-1 mt-1 text-sm text-blue-600 underline cursor-pointer"
         ></ul>
       </div>
-      <!-- index.html  (2 / 2) -->
     </aside>
     <!-- △△ Sidebar △△ -->
 

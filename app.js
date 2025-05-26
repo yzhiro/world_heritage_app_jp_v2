@@ -1,4 +1,4 @@
-/* app.js  (1 / 2)  – お気に入り機能追加版 */
+/* app.js (1 / 2) – 言語切替 & 遺産プルダウン対応 */
 
 const JP = "name_ja",
   EN = "name_en",
@@ -14,16 +14,17 @@ let feats = [],
   cluster,
   markerMap = new Map(); // key → marker
 
-/* ─── DOM ─── */
+/* ── DOM ── */
 const $ = (id) => document.getElementById(id);
 const langSel = $("langToggle"),
+  siteSel = $("siteSel"),
   kwInput = $("kwInput"),
   catSel = $("catSel"),
   ctySel = $("ctySel"),
   hit = $("hitCount"),
   favList = $("favList");
 
-/* ─── Leaflet 初期化 ─── */
+/* ── Leaflet ── */
 const map = L.map("map").setView([20, 0], 2);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -34,7 +35,7 @@ L.control
   .locate({ position: "topright", flyTo: true, strings: { title: "現在地へ" } })
   .addTo(map);
 
-/* ─── データ読み込み ─── */
+/* ── データ読み込み ── */
 Promise.all([
   fetch("world_heritage_ja.geojson").then((r) => r.json()),
   fetch("translationMap.json").then((r) => r.json()),
@@ -47,12 +48,13 @@ Promise.all([
     populateCountrySelect();
     initUI();
     renderAll();
+    updateSiteSelect();
     updateFavUI();
   })
   .catch((e) => alert("データ読み込みエラー:\n" + e));
-/* app.js  (2 / 2) */
+/* app.js (2 / 2) */
 
-/* ─── UI 初期化 ─── */
+/* ────────────────── UI 初期化 ────────────────── */
 function initUI() {
   const p = JSON.parse(localStorage.getItem(PREF) || "{}");
   if (p.lang) langSel.value = p.lang;
@@ -60,19 +62,29 @@ function initUI() {
   if (p.cat) catSel.value = p.cat;
   if (p.cty) ctySel.value = p.cty;
 
-  langSel.onchange = saveRender;
+  langSel.onchange = () => {
+    savePrefs();
+    renderAll();
+    updateSiteSelect();
+  };
+  siteSel.onchange = () => goToKey(siteSel.value);
+
   [kwInput, catSel, ctySel].forEach((el) =>
-    el.addEventListener(el.id === "kwInput" ? "input" : "change", saveRender)
+    el.addEventListener(el.id === "kwInput" ? "input" : "change", () => {
+      savePrefs();
+      renderAll();
+    })
   );
 
   $("menuBtn").onclick = () =>
     $("sidebar").classList.toggle("-translate-x-full");
   $("resetBtn").onclick = () => {
     kwInput.value = catSel.value = ctySel.value = "";
-    saveRender();
+    savePrefs();
+    renderAll();
   };
 }
-function saveRender() {
+const savePrefs = () =>
   localStorage.setItem(
     PREF,
     JSON.stringify({
@@ -82,22 +94,36 @@ function saveRender() {
       cty: ctySel.value,
     })
   );
-  renderAll();
-}
 
-/* ─── セレクター生成 ─── */
+/* ────────────────── セレクター生成 ────────────────── */
 function populateCountrySelect() {
   [...new Set(feats.map((f) => f.properties[CTRY]).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, "ja"))
     .forEach((c) => ctySel.add(new Option(c, c)));
 }
+function updateSiteSelect() {
+  const jp = langSel.value === "ja";
+  const opts = [...feats].sort((a, b) => {
+    const n1 = jp ? getJa(a) : getEn(a),
+      n2 = jp ? getJa(b) : getEn(b);
+    return n1.localeCompare(n2, "ja");
+  });
 
-/* ─── お気に入りロジック ─── */
+  siteSel.innerHTML = "";
+  opts.forEach((f) => {
+    const key = getKey(f),
+      label = jp ? getJa(f) : getEn(f);
+    siteSel.add(new Option(label, key));
+  });
+  siteSel.value = "";
+}
+
+/* ────────────────── お気に入り ────────────────── */
 function loadFavs() {
   return JSON.parse(localStorage.getItem(FAV) || "[]");
 }
-function saveFavs(arr) {
-  localStorage.setItem(FAV, JSON.stringify(arr));
+function saveFavs(a) {
+  localStorage.setItem(FAV, JSON.stringify(a));
 }
 function addFavorite(key) {
   let favs = loadFavs();
@@ -113,11 +139,11 @@ function updateFavUI() {
   loadFavs().forEach((key) => {
     const li = document.createElement("li");
     li.textContent = key;
-    li.onclick = () => gotoFavorite(key);
+    li.onclick = () => goToKey(key);
     favList.appendChild(li);
   });
 }
-function gotoFavorite(key) {
+function goToKey(key) {
   const m = markerMap.get(key);
   if (m) {
     map.setView(m.getLatLng(), 7, { animate: true });
@@ -125,14 +151,13 @@ function gotoFavorite(key) {
   }
 }
 
-/* ─── 描画 ─── */
+/* ────────────────── 描画 ────────────────── */
 function renderAll() {
   const list = filterFeats();
   hit.textContent = `${list.length} / ${feats.length} sites`;
 
   cluster.clearLayers();
   markerMap.clear();
-
   list.forEach((f) => {
     const m = featureToMarker(f);
     cluster.addLayer(m);
@@ -140,21 +165,21 @@ function renderAll() {
   });
 }
 
-/* ─── ヘルパ ─── */
+/* ────────────────── ヘルパ ────────────────── */
+const getJa = (f) =>
+  f.properties[JP] || translationMap[f.properties[EN]] || f.properties[EN];
+const getEn = (f) => f.properties[EN];
+
 function getKey(f) {
-  // 英語名＋国で一意に
-  return `${f.properties[EN]} (${f.properties[CTRY]})`;
+  return `${getEn(f)} (${f.properties[CTRY]})`;
 }
+
 function filterFeats() {
   const kw = kwInput.value.trim().toLowerCase(),
     jp = langSel.value === "ja";
-
   return feats.filter((f) => {
-    const p = f.properties,
-      en = p[EN],
-      ja = p[JP] || translationMap[en] || en,
-      name = jp ? ja : en;
-
+    const name = jp ? getJa(f) : getEn(f),
+      p = f.properties;
     return (
       (!kw || name.toLowerCase().includes(kw)) &&
       (!catSel.value || p[CAT] === catSel.value) &&
@@ -162,34 +187,31 @@ function filterFeats() {
     );
   });
 }
+
 function featureToMarker(f) {
-  const p = f.properties,
-    en = p[EN],
-    ja = p[JP] || translationMap[en] || en,
-    key = getKey(f);
+  const key = getKey(f),
+    ja = getJa(f),
+    en = getEn(f),
+    p = f.properties,
+    nameBold = langSel.value === "ja" ? ja : en,
+    nameSmall = langSel.value === "ja" ? en : ja,
+    html = `
+          <strong>${nameBold}</strong><br><span class="text-xs">${nameSmall}</span><br>
+          ${p[CTRY]}<br>${p[CAT]}　${p[YEAR] || ""}<br>
+          <button data-k="${key}"
+                  class="fav-btn bg-amber-400 hover:bg-amber-500
+                         text-xs text-white px-2 py-1 mt-1 rounded">
+            ★ お気に入り
+          </button>`;
 
-  const nameLine = `${ja} / ${en}`,
-    catLine = `${p[CAT]}　${p[YEAR] || ""}`,
-    ctyLine = p[CTRY];
-
-  const marker = L.circleMarker(
+  const m = L.circleMarker(
     [f.geometry.coordinates[1], f.geometry.coordinates[0]],
     { radius: 6, fillColor: "#3b82f6", fillOpacity: 0.85, stroke: false }
   );
-
-  // ポップアップ HTML
-  const html = `<strong>${nameLine}</strong><br>${ctyLine}<br>${catLine}<br>
-     <button data-key="${key}"
-             class="fav-btn bg-amber-400 hover:bg-amber-500
-                    text-xs text-white px-2 py-1 mt-1 rounded">
-       ★ お気に入り
-     </button>`;
-
-  marker.bindPopup(html, { maxWidth: 260 });
-  marker.on("popupopen", (e) => {
+  m.bindPopup(html, { maxWidth: 260 });
+  m.on("popupopen", (e) => {
     const btn = e.popup._contentNode.querySelector(".fav-btn");
-    if (btn) btn.onclick = () => addFavorite(btn.dataset.key);
+    if (btn) btn.onclick = () => addFavorite(btn.dataset.k);
   });
-
-  return marker;
+  return m;
 }
