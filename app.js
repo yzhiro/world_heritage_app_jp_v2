@@ -73,8 +73,9 @@ function initUI() {
     el.addEventListener(el.id === "kwInput" ? "input" : "change", () => {
       savePrefs();
       renderAll();
+      updateSiteSelect();
     })
-  );
+  ); // ★追記
 
   $("menuBtn").onclick = () =>
     $("sidebar").classList.toggle("-translate-x-full");
@@ -101,11 +102,13 @@ function populateCountrySelect() {
     .sort((a, b) => a.localeCompare(b, "ja"))
     .forEach((c) => ctySel.add(new Option(c, c)));
 }
+// ★ 現在のフィルタをそのまま使う版
 function updateSiteSelect() {
   const jp = langSel.value === "ja";
-  const opts = [...feats].sort((a, b) => {
-    const n1 = jp ? getJa(a) : getEn(a),
-      n2 = jp ? getJa(b) : getEn(b);
+  const list = filterFeats(); // ← ここだけ変更
+  const opts = list.sort((a, b) => {
+    const n1 = jp ? getJa(a) : getEn(a);
+    const n2 = jp ? getJa(b) : getEn(b);
     return n1.localeCompare(n2, "ja");
   });
 
