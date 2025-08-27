@@ -136,6 +136,33 @@ function initUI() {
     savePrefs();
     renderAll();
   };
+
+  // ドラッグアンドドロップ機能
+  const sidebar = $("sidebar");
+  const sidebarHeader = $("sidebar-header");
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  sidebarHeader.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - sidebar.getBoundingClientRect().left;
+    offsetY = e.clientY - sidebar.getBoundingClientRect().top;
+    sidebar.style.transition = "none"; // ドラッグ中はトランジションを無効化
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      const x = e.clientX - offsetX;
+      const y = e.clientY - offsetY;
+      sidebar.style.left = `${x}px`;
+      sidebar.style.top = `${y}px`;
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    sidebar.style.transition = ""; // ドラッグ終了時にトランジションを戻す
+  });
 }
 
 // 🗄️ 現 UI 状態を LocalStorage に保存
