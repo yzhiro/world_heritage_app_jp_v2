@@ -1,3 +1,7 @@
+<!DOCTYPE query [
+    <!ENTITY ouml "entity-value">
+    <!ENTITY rsquo "entity-value">
+]>
 <query columns="223" rows="1223">
 <row>
 <category>Natural</category>
@@ -660,7 +664,7 @@
 <region>Europe and North America</region>
 <revision>0</revision>
 <secondary_dates>2006</secondary_dates>
-<short_description><p>The Kvarken Archipelago (Finland) and the High Coast (Sweden) are situated in the Gulf of Bothnia, a northern extension of the Baltic Sea. The 5,600 islands of the Kvarken Archipelago feature unusual ridged washboard moraines, &lsquo;De Geer moraines&rsquo;, formed by the melting of the continental ice sheet, 10,000 to 24,000 years ago. The Archipelago is continuously rising from the sea in a process of rapid glacio-isostatic uplift, whereby the land, previously weighed down under the weight of a glacier, lifts at rates that are among the highest in the world. As a consequence islands appear and unite, peninsulas expand, and lakes evolve from bays and develop into marshes and peat fens. The High Coast has also been largely shaped by the combined processes of glaciation, glacial retreat and the emergence of new land from the sea. Since the last retreat of the ice from the High Coast 9,600 years ago, the uplift has been in the order of 285 m which is the highest known ''rebound''. The site affords outstanding opportunities for the understanding of the important processes that formed the glaciated and land uplift areas of the Earth''s surface.</p></short_description>
+<short_description><p>The Kvarken Archipelago (Finland) and the High Coast (Sweden) are situated in the Gulf of Bothnia, a northern extension of the Baltic Sea. The 5,600 islands of the Kvarken Archipelago feature unusual ridged washboard moraines, 'De Geer moraines', formed by the melting of the continental ice sheet, 10,000 to 24,000 years ago. The Archipelago is continuously rising from the sea in a process of rapid glacio-isostatic uplift, whereby the land, previously weighed down under the weight of a glacier, lifts at rates that are among the highest in the world. As a consequence islands appear and unite, peninsulas expand, and lakes evolve from bays and develop into marshes and peat fens. The High Coast has also been largely shaped by the combined processes of glaciation, glacial retreat and the emergence of new land from the sea. Since the last retreat of the ice from the High Coast 9,600 years ago, the uplift has been in the order of 285 m which is the highest known ''rebound''. The site affords outstanding opportunities for the understanding of the important processes that formed the glaciated and land uplift areas of the Earth''s surface.</p></short_description>
 <site>High Coast / Kvarken Archipelago</site>
 <states>Finland,Sweden</states>
 <transboundary>1</transboundary>
@@ -678,7 +682,7 @@
 <iso_code>fr,es</iso_code>
 <justification><p>The Committee inscribed the site under natural <em>criteria (vii) and (viii)</em>. The calcareous massif of the Mount Perdu displays classic geological land forms, including deep canyons and spectacular cirque walls. It is also an outstanding scenic landscape with meadows, lakes, caves and forests on mountain slopes. In addition, the area is of high interest to science and conservation. Concerning cultural values, the Committee inscribed the property on the basis of <em>criteria (iii), (iv) and (v)</em>: The Pyrénées-Mont Perdu area between France and Spain is an outstanding cultural landscape which combines scenic beauty with a socio-economic structure that has its roots in the past and illustrates a mountain way of life that has become rare in Europe.</p></justification>
 <latitude>42.6854200000</latitude>
-<location>France: Midi-Pyrénées Region, Hautes-Pyrénées Déparetment; 1999 Extension: Commune of Gèdre<br> Spain:Autonomous Community of Aragón, Province of Huesca, Communes of Torla, Fanlo, Tella-Sin, Puértolas, Bielsa, and Broto</location>
+<location>France: Midi-Pyrénées Region, Hautes-Pyrénées Déparetment; 1999 Extension: Commune of Gèdre<br/> Spain:Autonomous Community of Aragón, Province of Huesca, Communes of Torla, Fanlo, Tella-Sin, Puértolas, Bielsa, and Broto</location>
 <longitude>-0.0005000000</longitude>
 <region>Europe and North America</region>
 <revision>0</revision>
@@ -1028,7 +1032,7 @@
 <region>Europe and North America</region>
 <revision>0</revision>
 <secondary_dates/>
-<short_description><p>Situated in the eastern fringe of Central Europe, the transnational property numbers a selection of sixteen&nbsp;<em>tserkvas&nbsp;</em>(churches). They were built of horizontal wooden logs between the 16<sup>th</sup>&nbsp;and 19<sup>th</sup>&nbsp;centuries by communities of Orthodox and Greek Catholic faiths. The&nbsp;<em>tserkvas</em>&nbsp;bear testimony to a distinct building tradition rooted in Orthodox ecclesiastic design interwoven with elements of local tradition, and symbolic references to their communities&rsquo; cosmogony.&nbsp;&nbsp;The&nbsp;<em>tserkva</em><em>s&nbsp;</em>are built on a tri-partite plan surmounted by open quadrilateral or octagonal domes and cupolas. Integral to <em>tserkvas</em> are iconostasis screens, interior polychrome decorations, and other historic furnishings. Important elements of some <em>tserkvas</em> include&nbsp;wooden bell towers, churchyards, gatehouses and graveyards.</p></short_description>
+<short_description>An exceptional example of a late 19th- and early 20th-century industrial landscape.&#160;It consists of the industrial town of Crespi d'Adda, a truly remarkable entity which is still perfectly preserved.</short_description>
 <site>Wooden <em>Tserkvas</em> of the Carpathian Region in Poland and Ukraine</site>
 <states>Poland,Ukraine</states>
 <transboundary>1</transboundary>
