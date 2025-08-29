@@ -135,6 +135,7 @@ function initUI() {
     kwInput.value = catSel.value = ctySel.value = "";
     savePrefs();
     renderAll();
+    updateSiteSelect();
   };
 
   // ドラッグアンドドロップ機能
@@ -200,6 +201,7 @@ function updateSiteSelect() {
   });
 
   siteSel.innerHTML = ""; // 既存削除
+  siteSel.add(new Option("遺産を選択...", "")); // placeholder
   opts.forEach((f) => {
     const key   = getKey(f);
     const label = jp ? getJa(f) : getEn(f);
@@ -238,6 +240,7 @@ function updateFavUI() {
   favList.innerHTML = "";
   loadFavs().forEach((key) => {
     const li = document.createElement("li");
+    li.className = "cursor-pointer p-2 hover:bg-gray-700 rounded text-sm";
     li.textContent = key;
     li.onclick = () => goToKey(key);
     favList.appendChild(li);
@@ -248,8 +251,9 @@ function updateFavUI() {
 function goToKey(key) {
   const m = markerMap.get(key);
   if (m) {
-    map.setView(m.getLatLng(), 7, { animate: true });
-    m.openPopup();
+    cluster.zoomToShowLayer(m, () => {
+        m.openPopup();
+    });
   }
 }
 
@@ -270,6 +274,8 @@ function renderAll() {
     cluster.addLayer(m);
     markerMap.set(getKey(f), m);
   });
+
+  updateSiteSelect();
 }
 
 /*──────────────────── ヘルパ関数群 ────────────────────*/
@@ -317,6 +323,11 @@ function featureToMarker(f) {
   const linkLine = p.url
     ? `<a href="${p.url}" target="_blank" class="underline text-blue-600">UNESCOページ ▶</a><br>`
     : "";
+    
+  // 動画リンク (存在しない場合は空文字)
+  const videoLinkLine = p.video_link
+    ? `<a href="${p.video_link}" target="_blank" class="underline text-blue-600">動画リンク ▶</a><br>`
+    : "";
 
   // サムネイル画像 (image プロパティがある場合のみ)
   const imgLine = p.image
@@ -327,7 +338,9 @@ function featureToMarker(f) {
   const html = `
       <strong>${nameBold}</strong><br><span class="text-xs">${nameSmall}</span><br>
       ${p[CTRY]}<br>${p[CAT]}　${p[YEAR] || ""}<br>
-      ${linkLine}${imgLine}
+      ${linkLine}
+      ${videoLinkLine}
+      ${imgLine}
       <button data-k="${key}" class="fav-btn bg-amber-400 hover:bg-amber-500 text-xs text-white px-2 py-1 mt-1 rounded">★ お気に入り</button>`;
 
   // ▼ CircleMarker を作成 (スタイル固定)
